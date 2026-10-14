@@ -1,0 +1,51 @@
+package com.v2ray.ang.ui
+
+import android.content.Context
+import android.content.pm.PackageManager
+import android.widget.Toast
+import rikka.shizuku.Shizuku
+import rikka.shizuku.ShizukuRemoteProcess
+
+object ShizziHelper {
+    private var isTethering = false
+
+        fun toggleTethering(context: Context) {
+                try {
+                            if (!Shizuku.pingBinder()) {
+                                            Toast.makeText(context, "يرجى تشغيل تطبيق Shizuku أولاً", Toast.LENGTH_SHORT).show()
+                                                            return
+                                                                        }
+
+                                                                                    if (Shizuku.checkSelfPermission() != PackageManager.PERMISSION_GRANTED) {
+                                                                                                    Shizuku.requestPermission(1001)
+                                                                                                                    Toast.makeText(context, "يرجى منح صلاحية Shizuku ثم المحاولة مجدداً", Toast.LENGTH_SHORT).show()
+                                                                                                                                    return
+                                                                                                                                                }
+
+                                                                                                                                                            if (!isTethering) {
+                                                                                                                                                                            runShizukuCommand("cmd connectivity start-tethering wifi")
+                                                                                                                                                                                            isTethering = true
+                                                                                                                                                                                                            Toast.makeText(context, "تم تشغيل البث (Shizzi)", Toast.LENGTH_SHORT).show()
+                                                                                                                                                                                                                        } else {
+                                                                                                                                                                                                                                        runShizukuCommand("cmd connectivity stop-tethering wifi")
+                                                                                                                                                                                                                                                        isTethering = false
+                                                                                                                                                                                                                                                                        Toast.makeText(context, "تم إيقاف البث", Toast.LENGTH_SHORT).show()
+                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                            } catch (e: Exception) {
+                                                                                                                                                                                                                                                                                                        Toast.makeText(context, "خطأ: ${e.message}", Toast.LENGTH_LONG).show()
+                                                                                                                                                                                                                                                                                                                }
+                                                                                                                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                                                                                                                        private fun runShizukuCommand(command: String) {
+                                                                                                                                                                                                                                                                                                                                val method = Shizuku::class.java.getDeclaredMethod(
+                                                                                                                                                                                                                                                                                                                                            "newProcess",
+                                                                                                                                                                                                                                                                                                                                                        Array<String>::class.java,
+                                                                                                                                                                                                                                                                                                                                                                    Array<String>::class.java,
+                                                                                                                                                                                                                                                                                                                                                                                String::class.java
+                                                                                                                                                                                                                                                                                                                                                                                        )
+                                                                                                                                                                                                                                                                                                                                                                                                method.isAccessible = true
+                                                                                                                                                                                                                                                                                                                                                                                                        val process = method.invoke(null, arrayOf("sh", "-c", command), null, null) as ShizukuRemoteProcess
+                                                                                                                                                                                                                                                                                                                                                                                                                process.waitFor()
+                                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                                                                                    

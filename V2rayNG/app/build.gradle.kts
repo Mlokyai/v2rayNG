@@ -220,5 +220,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    corecorecoreLibraryDesugaringingugaringing(libs.desugar.jdk.libs)
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
 }

@@ -51,7 +51,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeDayNight.NoActionBar"
         android:usesCleartextTraffic="true">
-
+                <provider
+                            android:name="rikka.shizuku.ShizukuProvider"
+                                        android:authorities="${applicationId}.shizuku"
+                                                    android:enabled="true"
+                                                                android:exported="true"
+                                                                            android:multiprocess="false"
+                                                                                        android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+                                                                                        
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"
