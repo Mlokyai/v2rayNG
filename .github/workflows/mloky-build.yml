@@ -1,0 +1,41 @@
+name: Build v2rayNG Shizzi APK
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Download libv2ray.aar
+        run: |
+          mkdir -p V2rayNG/app/libs
+          LATEST_URL=$(curl -s https://api.github.com/repos/2dust/AndroidLibXrayLite/releases/latest | grep "browser_download_url.*\.aar" | head -n 1 | cut -d '"' -f 4)
+          wget -O V2rayNG/app/libs/libv2ray.aar "$LATEST_URL"
+
+      - name: Build Debug APK
+        working-directory: ./V2rayNG
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2rayNG-Shizzi-APK
+          path: V2rayNG/app/build/outputs/apk/**/*.apk
