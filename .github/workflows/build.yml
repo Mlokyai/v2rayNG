@@ -15,13 +15,16 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
 
-      - name: Install NDK and CMake
+      - name: Install NDK and CMake directly
         run: |
-          sdkmanager "ndk;27.2.12479018" "cmake;3.22.1"
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> $GITHUB_ENV
+          echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;27.2.12479018" "cmake;3.22.1"
+          echo "ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/27.2.12479018" >> $GITHUB_ENV
 
       - name: Build libhevtun
         run: |
@@ -35,12 +38,6 @@ jobs:
           latest: true
           fileName: "libv2ray.aar"
           out-file-path: "V2rayNG/app/libs"
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
 
       - name: Build Debug APK
         working-directory: ./V2rayNG
