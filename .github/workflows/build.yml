@@ -25,9 +25,12 @@ jobs:
         run: |
           echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;27.2.12479018" "cmake;3.22.1"
           echo "ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/27.2.12479018" >> $GITHUB_ENV
+          echo "NDK_HOME=${ANDROID_HOME}/ndk/27.2.12479018" >> $GITHUB_ENV
 
       - name: Build libhevtun
         run: |
+          export ANDROID_NDK_HOME=${ANDROID_HOME}/ndk/27.2.12479018
+          export NDK_HOME=${ANDROID_HOME}/ndk/27.2.12479018
           chmod +x ./compile-hevtun.sh
           ./compile-hevtun.sh
 
