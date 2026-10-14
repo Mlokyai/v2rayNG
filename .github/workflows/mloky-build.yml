@@ -10,17 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout repository with submodules
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - name: Setup Android SDK & NDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK r30 / Latest and compile hevtun
+        run: |
+          sdkmanager --install "ndk;27.2.12479018" "cmake;3.22.1"
+          export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018
+          if [ -f "./compile-hevtun.sh" ]; then
+            chmod +x ./compile-hevtun.sh
+            ./compile-hevtun.sh || true
+          fi
 
       - name: Download libv2ray.aar
         run: |
@@ -37,5 +48,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: v2rayNG-Shizzi-APK
+          name: Mloky-v2rayNG-Shizzi-APK
           path: V2rayNG/app/build/outputs/apk/**/*.apk
